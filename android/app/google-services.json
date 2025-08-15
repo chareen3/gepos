@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "223674411420",
+    "firebase_url": "https://egestionpos-c5a9e-default-rtdb.firebaseio.com",
+    "project_id": "egestionpos-c5a9e",
+    "storage_bucket": "egestionpos-c5a9e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:223674411420:android:4406734ad67212db420059",
+        "android_client_info": {
+          "package_name": "com.egestionpos.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDmq7OP4fCz-G_W8Gjt_HECQGDALzafyM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
