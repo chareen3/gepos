@@ -29,7 +29,7 @@ bool isPrintEnable = false;
 String noProductImageUrl = 'images/no_product_image.png';
 
 ///_______Purchase_Code________________________________________
-String purchaseCode = 'Please enter your purchase code';
+String purchaseCode = 'b1e4866b-50e0-400e-bdce-74e9c406a9c2';
 
 ///---------update information---------------
 
@@ -39,8 +39,8 @@ const String onboard2 = 'images/onbord2.png';
 const String onboard3 = 'images/onbord3.png';
 const String logo = 'images/logo.png';
 const String appsName = 'POSpro';
-const String companyWebsite = 'https://acnoo.com';
-const String companyName = 'Acnoo';
+const String companyWebsite = 'https://egestionpos.com';
+const String companyName = 'Egestionpos';
 
 bool connected = false;
 
@@ -194,7 +194,8 @@ extension ColorExt on Color {
   }
 }
 
-pw.Widget getLocalizedPdfText(String text, pw.TextStyle textStyle, {pw.TextAlign? textAlignment}) {
+pw.Widget getLocalizedPdfText(String text, pw.TextStyle textStyle,
+    {pw.TextAlign? textAlignment}) {
   print('Current Language: $selectedLanguage, Text: $text');
   return pw.Text(
     selectedLanguage == "bn" ? unicodeToBijoy(text) : text,
@@ -203,7 +204,8 @@ pw.Widget getLocalizedPdfText(String text, pw.TextStyle textStyle, {pw.TextAlign
   );
 }
 
-pw.Widget getLocalizedPdfTextWithLanguage(String text, pw.TextStyle textStyle, {pw.TextAlign? textAlignment}) {
+pw.Widget getLocalizedPdfTextWithLanguage(String text, pw.TextStyle textStyle,
+    {pw.TextAlign? textAlignment}) {
   print('Current Language: $selectedLanguage, Text: $text');
   String detectedLanguage = detectLanguageEnhanced(text);
   return pw.Text(
@@ -221,7 +223,9 @@ String detectLanguageEnhanced(String text, {double threshold = 0.7}) {
   final Map<String, int> counts = {
     'bn': RegExp(r'[\u0980-\u09FF]').allMatches(cleanedText).length,
     'hi': RegExp(r'[\u0900-\u097F]').allMatches(cleanedText).length,
-    'ar': RegExp(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]').allMatches(cleanedText).length,
+    'ar': RegExp(r'[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF]')
+        .allMatches(cleanedText)
+        .length,
     'fr': RegExp(r'[a-zA-Zéèêëàâîïôùûç]').allMatches(cleanedText).length,
   };
 
@@ -237,15 +241,20 @@ String detectLanguageEnhanced(String text, {double threshold = 0.7}) {
   return 'en';
 }
 
-String formatAmount(String value, {bool isCurrency = false, String currencySymbol = ''}) {
+String formatAmount(String value,
+    {bool isCurrency = false, String currencySymbol = ''}) {
   final number = double.tryParse(value) ?? 0;
-  return formatNumber(number, isCurrency: isCurrency, currencySymbol: currencySymbol);
+  return formatNumber(number,
+      isCurrency: isCurrency, currencySymbol: currencySymbol);
 }
 
-String formatNumber(double number, {int decimals = 2, bool isCurrency = false, String currencySymbol = '\$'}) {
+String formatNumber(double number,
+    {int decimals = 2, bool isCurrency = false, String currencySymbol = '\$'}) {
   String removeTrailingZeros(double num, int dec) {
     String fixed = num.toStringAsFixed(dec);
-    return fixed.contains('.') ? fixed.replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '') : fixed;
+    return fixed.contains('.')
+        ? fixed.replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '')
+        : fixed;
   }
 
   String formatted;
@@ -262,16 +271,20 @@ String formatNumber(double number, {int decimals = 2, bool isCurrency = false, S
   return isCurrency ? '$currencySymbol$formatted' : formatted;
 }
 
-Widget getFieldLabelText({required String label, required BuildContext context}) {
+Widget getFieldLabelText(
+    {required String label, required BuildContext context}) {
   final theme = Theme.of(context);
   return label.contains('*')
       ? RichText(
-          text: TextSpan(text: label.replaceAll('*', ''), style: theme.textTheme.bodyLarge, children: [
-          TextSpan(
-              text: '*',
-              style: theme.textTheme.bodyLarge?.copyWith(
-                color: Color(0xffF68A3D),
-              ))
-        ]))
+          text: TextSpan(
+              text: label.replaceAll('*', ''),
+              style: theme.textTheme.bodyLarge,
+              children: [
+              TextSpan(
+                  text: '*',
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    color: Color(0xffF68A3D),
+                  ))
+            ]))
       : Text(label);
 }
