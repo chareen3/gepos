@@ -38,7 +38,7 @@ const String onboard1 = 'images/onbord1.png';
 const String onboard2 = 'images/onbord2.png';
 const String onboard3 = 'images/onbord3.png';
 const String logo = 'images/logo.png';
-const String appsName = 'POSpro';
+const String appsName = 'eGestionPOS';
 const String companyWebsite = 'https://egestionpos.com';
 const String companyName = 'Egestionpos';
 
@@ -186,7 +186,7 @@ String formatPointNumber(num value, {bool addComma = false}) {
 //   }
 // }
 
-String? selectedLanguage = languageMap['English'];
+String? selectedLanguage = languageMap['French'];
 
 extension ColorExt on Color {
   Color withValues({required double alpha}) {

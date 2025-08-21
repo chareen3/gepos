@@ -103,7 +103,7 @@ class SplashScreenState extends State<SplashScreen> {
 
   Future<void> setLanguage() async {
     final prefs = await SharedPreferences.getInstance();
-    final savedLanguageCode = prefs.getString('lang') ?? 'en'; // Default to English code
+    final savedLanguageCode = prefs.getString('lang') ?? 'fr'; // Default to French code
     setState(() {
       selectedLanguage = savedLanguageCode;
     });
@@ -134,7 +134,7 @@ class SplashScreenState extends State<SplashScreen> {
     final theme = Theme.of(context);
     return SafeArea(
       child: Scaffold(
-        backgroundColor: kMainColor,
+        backgroundColor: Colors.white,
         body: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -149,7 +149,7 @@ class SplashScreenState extends State<SplashScreen> {
             Center(
               child: Text(
                 '${lang.S.of(context).poweredBy} $companyName',
-                style: theme.textTheme.titleLarge?.copyWith(color: Colors.white, fontWeight: FontWeight.w500, fontSize: 18),
+                style: theme.textTheme.titleLarge?.copyWith(color: kMainColor, fontWeight: FontWeight.w500, fontSize: 18),
               ),
             ),
             // Center(

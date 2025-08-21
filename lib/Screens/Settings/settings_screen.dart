@@ -77,12 +77,14 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                             decoration: BoxDecoration(
                               image: _details?.pictureUrl == null
                                   ? const DecorationImage(
-                                      image: AssetImage('images/no_shop_image.png'),
+                                      image: AssetImage(
+                                          'images/no_shop_image.png'),
                                       fit: BoxFit.cover,
                                     )
                                   : DecorationImage(
                                       image: NetworkImage(
-                                        APIConfig.domain + _details!.pictureUrl!,
+                                        APIConfig.domain +
+                                            _details!.pictureUrl!,
                                       ),
                                       fit: BoxFit.cover,
                                     ),
@@ -91,7 +93,9 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                           ),
                         ),
                         title: Text(
-                          _details?.user?.role == 'staff' ? '${_details?.companyName ?? ''} [${_details?.user?.name ?? ''}]' : _details?.companyName ?? '',
+                          _details?.user?.role == 'staff'
+                              ? '${_details?.companyName ?? ''} [${_details?.user?.name ?? ''}]'
+                              : _details?.companyName ?? '',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -114,7 +118,8 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
               body: PageNavigationListView(
                 navTiles: navItems,
                 onTap: (value) async {
-                  if (value.type == PageNavigationListTileType.navigation && value.route != null) {
+                  if (value.type == PageNavigationListTileType.navigation &&
+                      value.route != null) {
                     if (value.route is SelectLanguage) {
                       final prefs = await SharedPreferences.getInstance();
                       final data = prefs.getString('lang');
@@ -129,8 +134,12 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                     }
 
                     final _previousCurrency = currency;
-                    await Navigator.of(context).push(MaterialPageRoute(builder: (_) => value.route!)).then(
-                          (_) => (_previousCurrency != currency) ? setState(() {}) : null,
+                    await Navigator.of(context)
+                        .push(MaterialPageRoute(builder: (_) => value.route!))
+                        .then(
+                          (_) => (_previousCurrency != currency)
+                              ? setState(() {})
+                              : null,
                         );
                   }
 
@@ -152,7 +161,7 @@ class SettingScreenState extends ConsumerState<SettingScreen> {
                 //     top: 8,
                 //   ),
                 //   child: Text(
-                //     'POSPro V-$appVersion',
+                //     'eGestionPOS V-$appVersion',
                 //     style: _theme.textTheme.bodyLarge?.copyWith(
                 //       color: kGreyTextColor,
                 //     ),

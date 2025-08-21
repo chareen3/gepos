@@ -1,6 +1,6 @@
 {
-    "name": "pospro_main",
-    "short_name": "pospro_main",
+    "name": "eGestionPOS_main",
+    "short_name": "eGestionPOS_main",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
