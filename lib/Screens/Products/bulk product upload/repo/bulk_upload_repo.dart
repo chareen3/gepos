@@ -20,21 +20,26 @@ class BulkUpLoadRepo {
     required BuildContext context,
     required File file,
   }) async {
-    CustomHttpClient customHttpClient = CustomHttpClient(client: http.Client(), context: context, ref: ref);
+    CustomHttpClient customHttpClient =
+        CustomHttpClient(client: http.Client(), context: context, ref: ref);
     final uri = Uri.parse('${APIConfig.url}/bulk-uploads');
 
     var request = http.MultipartRequest('POST', uri)
       ..headers['Accept'] = 'application/json'
       ..headers['Authorization'] = await getAuthToken();
 
-    request.files.add(http.MultipartFile.fromBytes('file', file.readAsBytesSync(), filename: file.path));
+    request.files.add(http.MultipartFile.fromBytes(
+        'file', file.readAsBytesSync(),
+        filename: file.path));
 
-    final response = await customHttpClient.uploadFile(url: uri, fileFieldName: 'file', file: file, fields: request.fields);
+    final response = await customHttpClient.uploadFile(
+        url: uri, fileFieldName: 'file', file: file, fields: request.fields);
     final responseData = await response.stream.bytesToString();
     final parsedData = jsonDecode(responseData);
 
     if (response.statusCode == 200) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Added successful!')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Added successful!')));
       ref.refresh(productProvider);
       ref.refresh(categoryProvider);
       ref.refresh(brandsProvider);
@@ -42,11 +47,13 @@ class BulkUpLoadRepo {
 
       Navigator.pop(context);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: ${parsedData['message']}')));
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Failed: ${parsedData['message']}')));
     }
   }
 
-  final String fileUrl = '${APIConfig.domain}assets/POSpro_bulk_product_upload.xlsx';
+  final String fileUrl =
+      '${APIConfig.domain}assets/eGestionPOS_bulk_product_upload.xlsx';
 
   Future<void> downloadFile(BuildContext context) async {
     try {
@@ -59,7 +66,7 @@ class BulkUpLoadRepo {
       }
 
       final downloadPath = '/storage/emulated/0/Download';
-      final file = File('$downloadPath/POSpro_bulk_product_upload.xlsx');
+      final file = File('$downloadPath/eGestionPOS_bulk_product_upload.xlsx');
 
       await file.writeAsBytes(response.bodyBytes);
 

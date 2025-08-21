@@ -1,8 +1,8 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
 ///______APP_Default_currency________________________
-const String appDefaultCurrency = '\$';
-const String appDefaultCurrencyName = 'US Dollar';
+const String appDefaultCurrency = 'FCFA';
+const String appDefaultCurrencyName = 'CFA Franc';
 
 ///______Dynamic_currency_variables___________________
 String currency = appDefaultCurrency;

@@ -51,7 +51,9 @@ class MyApp extends StatelessWidget {
       child: Builder(
           builder: (context) => MaterialApp(
                 debugShowCheckedModeBanner: false,
-                locale: pro.Provider.of<LanguageChangeProvider>(context, listen: true).currentLocale,
+                locale: pro.Provider.of<LanguageChangeProvider>(context,
+                        listen: true)
+                    .currentLocale,
                 localizationsDelegates: const [
                   S.delegate,
                   GlobalMaterialLocalizations.delegate,
@@ -59,13 +61,14 @@ class MyApp extends StatelessWidget {
                   GlobalCupertinoLocalizations.delegate,
                 ],
                 supportedLocales: S.delegate.supportedLocales,
-                title: 'POSPro',
+                title: 'eGestionPOS',
                 initialRoute: '/',
                 builder: EasyLoading.init(),
                 routes: {
                   '/': (context) => const SplashScreen(),
                   '/onBoard': (context) => const OnBoard(),
-                  '/loginForm': (context) => const LoginForm(isEmailLogin: true),
+                  '/loginForm': (context) =>
+                      const LoginForm(isEmailLogin: true),
                   '/signup': (context) => const RegisterScreen(),
                   '/forgotPassword': (context) => const ForgotPassword(),
                   '/home': (context) => const Home(),

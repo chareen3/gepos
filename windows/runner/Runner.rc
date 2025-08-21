@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.maantheme.mobilepos" "\0"
-            VALUE "FileDescription", "pospro_main" "\0"
+            VALUE "FileDescription", "eGestionPOS_main" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "pospro_main" "\0"
+            VALUE "InternalName", "eGestionPOS_main" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2024 com.maantheme.mobilepos. All rights reserved." "\0"
-            VALUE "OriginalFilename", "pospro_main.exe" "\0"
-            VALUE "ProductName", "pospro_main" "\0"
+            VALUE "OriginalFilename", "eGestionPOS_main.exe" "\0"
+            VALUE "ProductName", "eGestionPOS_main" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
