@@ -22,9 +22,27 @@ class PaymentTypeRepo {
       });
 
       if (response.statusCode == 200) {
-        final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-        final categoryList = parsedData['data'] as List<dynamic>;
-        return categoryList.map((category) => PaymentTypeModel.fromJson(category)).toList();
+        final parsedData = jsonDecode(response.body);
+        
+        // Laravel API returns: {"message": "...", "data": [...]}
+        if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+          final responseData = parsedData['data'];
+          
+          List<dynamic> paymentTypeList;
+          if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+            // Paginated response
+            paymentTypeList = responseData['data'] as List<dynamic>;
+          } else if (responseData is List) {
+            // Direct array response
+            paymentTypeList = responseData;
+          } else {
+            throw Exception('Invalid payment type data structure: ${responseData.runtimeType}');
+          }
+          
+          return paymentTypeList.map((paymentType) => PaymentTypeModel.fromJson(paymentType)).toList();
+        } else {
+          throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+        }
       } else {
         print('Response: ${response.statusCode}');
         print('Response: ${response.body}');

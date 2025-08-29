@@ -21,10 +21,27 @@ class TaxRepo {
     });
 
     if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final partyList = parsedData['data'] as List<dynamic>;
-      return partyList.map((category) => VatModel.fromJson(category)).toList();
+      final parsedData = jsonDecode(response.body);
+      
+      // Laravel API returns: {"message": "...", "data": [...]}
+      if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+        final responseData = parsedData['data'];
+        
+        List<dynamic> taxList;
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+          // Paginated response
+          taxList = responseData['data'] as List<dynamic>;
+        } else if (responseData is List) {
+          // Direct array response
+          taxList = responseData;
+        } else {
+          throw Exception('Invalid tax data structure: ${responseData.runtimeType}');
+        }
+        
+        return taxList.map((tax) => VatModel.fromJson(tax)).toList();
+      } else {
+        throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+      }
       // Parse into Party objects
     } else {
       throw Exception('Failed to fetch tax list');

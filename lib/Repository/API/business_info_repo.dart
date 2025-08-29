@@ -14,20 +14,40 @@ import '../constant_functions.dart';
 
 class BusinessRepository {
   Future<BusinessInformationModel> fetchBusinessData() async {
-    final uri = Uri.parse('${APIConfig.url}/business');
-    final token = await getAuthToken(); // Replace with your token retrieval logic
+    try {
+      final uri = Uri.parse('${APIConfig.url}/business');
+      final token = await getAuthToken();
 
-    final response = await http.get(uri, headers: {
-      'Accept': 'application/json',
-      'Authorization': 'Bearer $token', // Assuming Bearer token format
-    });
-    if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body);
-      final BusinessInformationModel businessInformation = BusinessInformationModel.fromJson(parsedData['data']);
+      print('Fetching business data from: $uri');
+      print('Using token: $token');
 
-      return businessInformation;
-    } else {
-      throw Exception('Failed to fetch business data');
+      final response = await http.get(uri, headers: {
+        'Accept': 'application/json',
+        'Authorization': token,
+      });
+      
+      print('Business API Response Status: ${response.statusCode}');
+      print('Business API Response Body: ${response.body}');
+      
+      if (response.statusCode == 200) {
+        final parsedData = jsonDecode(response.body);
+        
+        // Laravel API returns: {"message": "...", "data": {...}}
+        if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+          final BusinessInformationModel businessInformation = BusinessInformationModel.fromJson(parsedData['data']);
+          return businessInformation;
+        } else {
+          throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+        }
+      } else if (response.statusCode == 401) {
+        throw Exception('Authentication failed. Please login again.');
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception('Failed to fetch business data: ${response.statusCode} - ${errorData['message'] ?? response.body}');
+      }
+    } catch (e) {
+      print('Error fetching business data: $e');
+      throw Exception('Failed to fetch business data: $e');
     }
   }
 

@@ -23,9 +23,27 @@ class ExpanseCategoryRepo {
       });
 
       if (response.statusCode == 200) {
-        final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-        final categoryList = parsedData['data'] as List<dynamic>;
-        return categoryList.map((category) => ExpenseCategory.fromJson(category)).toList();
+        final parsedData = jsonDecode(response.body);
+        
+        // Laravel API returns: {"message": "...", "data": [...]}
+        if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+          final responseData = parsedData['data'];
+          
+          List<dynamic> categoryList;
+          if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+            // Paginated response
+            categoryList = responseData['data'] as List<dynamic>;
+          } else if (responseData is List) {
+            // Direct array response
+            categoryList = responseData;
+          } else {
+            throw Exception('Invalid expense category data structure: ${responseData.runtimeType}');
+          }
+          
+          return categoryList.map((category) => ExpenseCategory.fromJson(category)).toList();
+        } else {
+          throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+        }
       } else {
         // Handle specific error cases based on response codes
         throw Exception('Failed to fetch categories: ${response.statusCode}');

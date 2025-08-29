@@ -25,10 +25,27 @@ class SaleRepo {
     });
 
     if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final partyList = parsedData['data'] as List<dynamic>;
-      return partyList.map((category) => SalesTransactionModel.fromJson(category)).toList();
+      final parsedData = jsonDecode(response.body);
+      
+      // Laravel API returns: {"message": "...", "data": [...]}
+      if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+        final responseData = parsedData['data'];
+        
+        List<dynamic> salesList;
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+          // Paginated response
+          salesList = responseData['data'] as List<dynamic>;
+        } else if (responseData is List) {
+          // Direct array response
+          salesList = responseData;
+        } else {
+          throw Exception('Invalid sales data structure: ${responseData.runtimeType}');
+        }
+        
+        return salesList.map((sale) => SalesTransactionModel.fromJson(sale)).toList();
+      } else {
+        throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+      }
       // Parse into Party objects
     } else {
       throw Exception('Failed to fetch Sales List');

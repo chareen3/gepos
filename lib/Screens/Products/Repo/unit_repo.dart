@@ -23,9 +23,27 @@ class UnitsRepo {
       });
 
       if (response.statusCode == 200) {
-        final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-        final categoryList = parsedData['data'] as List<dynamic>;
-        return categoryList.map((unit) => Unit.fromJson(unit)).toList();
+        final parsedData = jsonDecode(response.body);
+        
+        // Laravel API returns: {"message": "...", "data": [...]}
+        if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+          final responseData = parsedData['data'];
+          
+          List<dynamic> unitList;
+          if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+            // Paginated response
+            unitList = responseData['data'] as List<dynamic>;
+          } else if (responseData is List) {
+            // Direct array response
+            unitList = responseData;
+          } else {
+            throw Exception('Invalid unit data structure: ${responseData.runtimeType}');
+          }
+          
+          return unitList.map((unit) => Unit.fromJson(unit)).toList();
+        } else {
+          throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+        }
       } else {
         throw Exception('Failed to fetch units: ${response.statusCode}');
       }

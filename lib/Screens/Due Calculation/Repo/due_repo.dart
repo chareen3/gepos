@@ -26,10 +26,27 @@ class DueRepo {
     });
 
     if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final dueList = parsedData['data'] as List<dynamic>;
-      return dueList.map((due) => DueCollection.fromJson(due)).toList();
+      final parsedData = jsonDecode(response.body);
+      
+      // Laravel API returns: {"message": "...", "data": [...]}
+      if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+        final responseData = parsedData['data'];
+        
+        List<dynamic> dueList;
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+          // Paginated response
+          dueList = responseData['data'] as List<dynamic>;
+        } else if (responseData is List) {
+          // Direct array response
+          dueList = responseData;
+        } else {
+          throw Exception('Invalid due data structure: ${responseData.runtimeType}');
+        }
+        
+        return dueList.map((due) => DueCollection.fromJson(due)).toList();
+      } else {
+        throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+      }
     } else {
       throw Exception('Failed to fetch Due List');
     }

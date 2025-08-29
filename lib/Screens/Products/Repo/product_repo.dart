@@ -19,21 +19,53 @@ import '../add_product.dart';
 
 class ProductRepo {
   Future<List<ProductModel>> fetchAllProducts() async {
-    final uri = Uri.parse('${APIConfig.url}/products');
+    try {
+      final uri = Uri.parse('${APIConfig.url}/products');
+      final token = await getAuthToken();
 
-    final response = await http.get(uri, headers: {
-      'Accept': 'application/json',
-      'Authorization': await getAuthToken(),
-    });
+      print('Fetching products from: $uri');
+      print('Using token: $token');
 
-    if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
+      final response = await http.get(uri, headers: {
+        'Accept': 'application/json',
+        'Authorization': token,
+      });
 
-      final partyList = parsedData['data'] as List<dynamic>;
-      return partyList.map((category) => ProductModel.fromJson(category)).toList();
-      // Parse into Party objects
-    } else {
-      throw Exception('Failed to fetch Products');
+      print('Products API Response Status: ${response.statusCode}');
+      print('Products API Response Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final parsedData = jsonDecode(response.body);
+        
+        // Laravel API returns: {"message": "...", "data": {...}} with pagination
+        if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+          final responseData = parsedData['data'];
+          
+          // Check if data is paginated (has 'data' field) or direct array
+          List<dynamic> productList;
+          if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+            // Paginated response: {"data": {"data": [...], "current_page": 1, ...}}
+            productList = responseData['data'] as List<dynamic>;
+          } else if (responseData is List) {
+            // Direct array response: {"data": [...]}
+            productList = responseData;
+          } else {
+            throw Exception('Invalid product data structure: ${responseData.runtimeType}');
+          }
+          
+          return productList.map((product) => ProductModel.fromJson(product)).toList();
+        } else {
+          throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+        }
+      } else if (response.statusCode == 401) {
+        throw Exception('Authentication failed. Please login again.');
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception('Failed to fetch products: ${response.statusCode} - ${errorData['message'] ?? response.body}');
+      }
+    } catch (e) {
+      print('Error fetching products: $e');
+      throw Exception('Failed to fetch products: $e');
     }
   }
 

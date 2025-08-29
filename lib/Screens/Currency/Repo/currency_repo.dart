@@ -16,15 +16,31 @@ class CurrencyRepo {
     });
 
     if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final partyList = parsedData['data'] as List<dynamic>;
-
-      // Filter and map the list
-      return partyList
-          .where((category) => category['status'] == true) // Filter by status
-          .map((category) => CurrencyModel.fromJson(category))
-          .toList();
+      final parsedData = jsonDecode(response.body);
+      
+      // Laravel API returns: {"message": "...", "data": [...]}
+      if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+        final responseData = parsedData['data'];
+        
+        List<dynamic> currencyList;
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+          // Paginated response
+          currencyList = responseData['data'] as List<dynamic>;
+        } else if (responseData is List) {
+          // Direct array response
+          currencyList = responseData;
+        } else {
+          throw Exception('Invalid currency data structure: ${responseData.runtimeType}');
+        }
+        
+        // Filter and map the list
+        return currencyList
+            .where((category) => category['status'] == true) // Filter by status
+            .map((category) => CurrencyModel.fromJson(category))
+            .toList();
+      } else {
+        throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+      }
     } else {
       throw Exception('Failed to fetch Currency');
     }

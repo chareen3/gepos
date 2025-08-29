@@ -28,10 +28,27 @@ class SubscriptionPlanRepo {
     });
 
     if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final partyList = parsedData['data'] as List<dynamic>;
-      return partyList.map((category) => SubscriptionPlanModelNew.fromJson(category)).toList();
+      final parsedData = jsonDecode(response.body);
+      
+      // Laravel API returns: {"message": "...", "data": [...]}
+      if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+        final responseData = parsedData['data'];
+        
+        List<dynamic> planList;
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+          // Paginated response
+          planList = responseData['data'] as List<dynamic>;
+        } else if (responseData is List) {
+          // Direct array response
+          planList = responseData;
+        } else {
+          throw Exception('Invalid plan data structure: ${responseData.runtimeType}');
+        }
+        
+        return planList.map((plan) => SubscriptionPlanModelNew.fromJson(plan)).toList();
+      } else {
+        throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+      }
       // Parse into Party objects
     } else {
       throw Exception('Failed to fetch Products');
@@ -47,10 +64,27 @@ class SubscriptionPlanRepo {
     });
 
     if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final partyList = parsedData['data'] as List<dynamic>;
-      return partyList.map((category) => SubscriptionPlanModel.fromJson(category)).toList();
+      final parsedData = jsonDecode(response.body);
+      
+      // Laravel API returns: {"message": "...", "data": [...]}
+      if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+        final responseData = parsedData['data'];
+        
+        List<dynamic> planList;
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+          // Paginated response
+          planList = responseData['data'] as List<dynamic>;
+        } else if (responseData is List) {
+          // Direct array response
+          planList = responseData;
+        } else {
+          throw Exception('Invalid plan data structure: ${responseData.runtimeType}');
+        }
+        
+        return planList.map((plan) => SubscriptionPlanModel.fromJson(plan)).toList();
+      } else {
+        throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+      }
       // Parse into Party objects
     } else {
       throw Exception('Failed to fetch Products');

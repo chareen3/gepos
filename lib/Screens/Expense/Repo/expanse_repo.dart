@@ -23,10 +23,27 @@ class ExpenseRepo {
     });
 
     if (response.statusCode == 200) {
-      final parsedData = jsonDecode(response.body) as Map<String, dynamic>;
-
-      final partyList = parsedData['data'] as List<dynamic>;
-      return partyList.map((category) => Expense.fromJson(category)).toList();
+      final parsedData = jsonDecode(response.body);
+      
+      // Laravel API returns: {"message": "...", "data": [...]}
+      if (parsedData is Map<String, dynamic> && parsedData.containsKey('data')) {
+        final responseData = parsedData['data'];
+        
+        List<dynamic> expenseList;
+        if (responseData is Map<String, dynamic> && responseData.containsKey('data')) {
+          // Paginated response
+          expenseList = responseData['data'] as List<dynamic>;
+        } else if (responseData is List) {
+          // Direct array response
+          expenseList = responseData;
+        } else {
+          throw Exception('Invalid expense data structure: ${responseData.runtimeType}');
+        }
+        
+        return expenseList.map((expense) => Expense.fromJson(expense)).toList();
+      } else {
+        throw Exception('Invalid API response structure: ${parsedData.runtimeType}');
+      }
       // Parse into Party objects
     } else {
       throw Exception('Failed to fetch expense list');
